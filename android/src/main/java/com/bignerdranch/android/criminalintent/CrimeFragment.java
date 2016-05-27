@@ -35,6 +35,7 @@ public class CrimeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
 
         mTitleField = (EditText) v.findViewById(R.id.crime_title);
+        mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
@@ -57,6 +58,7 @@ public class CrimeFragment extends Fragment {
         mDateButton.setEnabled(false); // disable for now; it will be enabled later
 
         mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
+        mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
