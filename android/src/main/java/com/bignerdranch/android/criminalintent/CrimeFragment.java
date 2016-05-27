@@ -25,7 +25,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         /* retrieve crimeId argument from Fragment Bundle */
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
