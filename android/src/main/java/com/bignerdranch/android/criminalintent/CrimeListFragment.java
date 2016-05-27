@@ -26,17 +26,13 @@ public class CrimeListFragment extends ListFragment {
         /* get the CrimeLab singleton and then get the list of crimes */
         mCrimes = CrimeLab.getInstance(getActivity()).getCrimes();
 
-        ArrayAdapter<Crime> adapter =
-                new ArrayAdapter<Crime>(getActivity(),
-                                        android.R.layout.simple_list_item_1,
-                                        mCrimes);
-
+        CrimeAdapter adapter = new CrimeAdapter(mCrimes);
         setListAdapter(adapter);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Crime crime = (Crime) getListAdapter().getItem(position);
+        Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
         Log.d(TAG, crime.getTitle() + " was clicked");
     }
 
