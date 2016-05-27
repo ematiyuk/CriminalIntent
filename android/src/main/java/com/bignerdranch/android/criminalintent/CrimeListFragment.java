@@ -36,4 +36,11 @@ public class CrimeListFragment extends ListFragment {
         Crime crime = (Crime) getListAdapter().getItem(position);
         Log.d(TAG, crime.getTitle() + " was clicked");
     }
+
+    private class CrimeAdapter extends ArrayAdapter<Crime> {
+
+        public CrimeAdapter(ArrayList<Crime> crimes) {
+            super(getActivity(), 0, crimes);
+        }
+    }
 }
