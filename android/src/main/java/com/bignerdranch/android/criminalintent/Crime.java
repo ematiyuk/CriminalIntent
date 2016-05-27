@@ -16,6 +16,11 @@ public class Crime {
         mDate = new Date(); // sets mDate to the current date (the default date for a crime)
     }
 
+    @Override
+    public String toString() {
+        return mTitle;
+    }
+
     public UUID getId() {
         return mId;
     }
