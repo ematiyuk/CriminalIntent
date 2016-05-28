@@ -17,7 +17,10 @@ import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
     public static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
+
     private static final String DIALOG_DATE = "date";
+    private static final int REQUEST_DATE = 0;
+
     private Crime mCrime;
 
     private EditText mTitleField;
@@ -73,6 +76,7 @@ public class CrimeFragment extends Fragment {
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(fm, DIALOG_DATE);
             }
         });
