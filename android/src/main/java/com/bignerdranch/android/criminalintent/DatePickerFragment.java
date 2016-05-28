@@ -6,7 +6,12 @@ import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.Date;
+
 public class DatePickerFragment extends DialogFragment {
+    public static final String EXTRA_DATE = "com.bignerdranch.android.criminalintent.date";
+
+    private Date mDate;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -17,5 +22,14 @@ public class DatePickerFragment extends DialogFragment {
                 .setTitle(R.string.date_picker_title)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
+    }
+
+    public static DatePickerFragment newInstance(Date date) {
+        Bundle args = new Bundle();
+        args.putSerializable(EXTRA_DATE, date);
+        DatePickerFragment fragment = new DatePickerFragment();
+        fragment.setArguments(args);
+
+        return fragment;
     }
 }
