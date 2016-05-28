@@ -1,7 +1,10 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +18,16 @@ public class DatePickerFragment extends DialogFragment {
     public static final String EXTRA_DATE = "com.bignerdranch.android.criminalintent.date";
 
     private Date mDate;
+
+    private void sendResult(int resultCode) {
+        if (getTargetFragment() == null)
+            return;
+
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DATE, mDate);
+
+        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -44,7 +57,14 @@ public class DatePickerFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .setTitle(R.string.date_picker_title)
-                .setPositiveButton(android.R.string.ok, null)
+                .setPositiveButton(
+                        android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int which) {
+                                sendResult(Activity.RESULT_OK);
+                            }
+                        })
                 .create();
     }
 
