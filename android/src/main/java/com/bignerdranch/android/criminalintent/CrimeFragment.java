@@ -110,7 +110,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                TimePickerFragment dialog = new TimePickerFragment();
+                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate());
                 dialog.show(fm, DIALOG_TIME);
             }
         });
