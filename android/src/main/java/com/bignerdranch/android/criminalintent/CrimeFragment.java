@@ -63,6 +63,10 @@ public class CrimeFragment extends Fragment {
         mDateButton.setText(mCrime.getDateString());
     }
 
+    public void updateTime() {
+        mTimeButton.setText(mCrime.getTimeString());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
@@ -100,6 +104,7 @@ public class CrimeFragment extends Fragment {
         });
 
         mTimeButton = (Button) v.findViewById(R.id.crime_time);
+        updateTime();
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
