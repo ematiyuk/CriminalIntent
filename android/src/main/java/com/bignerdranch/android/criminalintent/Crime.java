@@ -48,6 +48,11 @@ public class Crime {
         return  timeFormat.format(mDate);
     }
 
+    public String getDateTimeString() {
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
+        return dateFormat.format(mDate);
+    }
+
     public boolean isSolved() {
         return mSolved;
     }
