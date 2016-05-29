@@ -39,7 +39,7 @@ public class Crime {
     }
 
     public String getDateString() {
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
         return  dateFormat.format(mDate);
     }
 
