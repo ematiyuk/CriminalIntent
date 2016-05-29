@@ -66,11 +66,11 @@ public class CrimeFragment extends Fragment {
     }
 
     public void updateDate() {
-        mDateButton.setText(mCrime.getDateString());
+        mDateButton.setText(DateTimeFormat.getDateString(getActivity(), mCrime.getDate()));
     }
 
     public void updateTime() {
-        mTimeButton.setText(mCrime.getTimeString());
+        mTimeButton.setText(DateTimeFormat.getTimeString(getActivity(), mCrime.getDate()));
     }
 
     @Override

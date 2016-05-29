@@ -1,6 +1,5 @@
 package com.bignerdranch.android.criminalintent;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -36,21 +35,6 @@ public class Crime {
 
     public Date getDate() {
         return mDate;
-    }
-
-    public String getDateString() {
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG);
-        return  dateFormat.format(mDate);
-    }
-
-    public String getTimeString() {
-        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
-        return  timeFormat.format(mDate);
-    }
-
-    public String getDateTimeString() {
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
-        return dateFormat.format(mDate);
     }
 
     public boolean isSolved() {
