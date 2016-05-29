@@ -22,6 +22,7 @@ public class CrimeFragment extends Fragment {
     public static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
 
     private static final String DIALOG_DATE = "date";
+    private static final String DIALOG_TIME = "time";
     private static final int REQUEST_DATE = 0;
 
     private Crime mCrime;
@@ -108,7 +109,9 @@ public class CrimeFragment extends Fragment {
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                TimePickerFragment dialog = new TimePickerFragment();
+                dialog.show(fm, DIALOG_TIME);
             }
         });
 
