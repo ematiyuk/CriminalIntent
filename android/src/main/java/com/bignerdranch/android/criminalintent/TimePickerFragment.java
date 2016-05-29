@@ -65,6 +65,7 @@ public class TimePickerFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .setTitle(R.string.time_picker_title)
+                .setNeutralButton(android.R.string.cancel, null)
                 .setPositiveButton(
                         android.R.string.ok,
                         new DialogInterface.OnClickListener() {
