@@ -43,6 +43,11 @@ public class Crime {
         return  dateFormat.format(mDate);
     }
 
+    public String getTimeString() {
+        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
+        return  timeFormat.format(mDate);
+    }
+
     public boolean isSolved() {
         return mSolved;
     }
