@@ -9,7 +9,6 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class TimePickerFragment extends DialogFragment {
     public static final String EXTRA_TIME = "com.bignerdranch.android.criminalintent.time";
