@@ -12,6 +12,7 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class TimePickerFragment extends DialogFragment {
     public static final String EXTRA_TIME = "com.bignerdranch.android.criminalintent.time";
@@ -32,11 +33,14 @@ public class TimePickerFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDate = (Date) getArguments().getSerializable(EXTRA_TIME);
 
-        // create a Calendar to get the hour and minute
+        // create a Calendar to get the year, month, day, hour and minute
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_time, null);
 
@@ -46,9 +50,8 @@ public class TimePickerFragment extends DialogFragment {
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
-                // translate year, month, day into a Date object using a calendar
-                mDate.setHours(hourOfDay);
-                mDate.setMinutes(minute);
+                // translate year, month, day, hour, minute into a Date object using a calendar
+                mDate = new GregorianCalendar(year, month, day, hourOfDay, minute).getTime();
 
                 // update argument to preserve selected value on rotation
                 getArguments().putSerializable(EXTRA_TIME, mDate);
