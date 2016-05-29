@@ -44,7 +44,7 @@ public class Crime {
     }
 
     public String getTimeString() {
-        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
+        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
         return  timeFormat.format(mDate);
     }
 
