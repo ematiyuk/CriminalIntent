@@ -31,6 +31,10 @@ public class CrimeLab {
         return sCrimeLab;
     }
 
+    public void addCrime(Crime crime) {
+        mCrimes.add(crime);
+    }
+
     public ArrayList<Crime> getCrimes() {
         return mCrimes;
     }
