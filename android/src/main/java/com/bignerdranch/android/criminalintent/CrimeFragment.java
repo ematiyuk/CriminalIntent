@@ -11,6 +11,7 @@ import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,6 +45,8 @@ public class CrimeFragment extends Fragment {
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
         mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
+
+        setHasOptionsMenu(true); // turn on options menu handling
     }
 
     public static CrimeFragment newInstance(UUID crimeId) {
@@ -142,5 +145,16 @@ public class CrimeFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // to be implemented next
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
