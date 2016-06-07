@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -42,6 +43,7 @@ public class CrimeListFragment extends ListFragment {
         inflater.inflate(R.menu.fragment_crime_list, menu);
     }
 
+    @TargetApi(11)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -51,6 +53,9 @@ public class CrimeListFragment extends ListFragment {
                 Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
                 intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
                 startActivityForResult(intent, 0);
+                return true;
+            case R.id.menu_item_show_subtitle:
+                getActivity().getActionBar().setSubtitle(R.string.subtitle);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
