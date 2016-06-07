@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class CrimeListFragment extends ListFragment {
     private ArrayList<Crime> mCrimes;
 
     private boolean mSubtitleVisible;
+
+    private Button mNewCrimeButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,14 @@ public class CrimeListFragment extends ListFragment {
             }
         }
 
+        mNewCrimeButton = (Button) view.findViewById(R.id.new_crime_button);
+        mNewCrimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addNewCrime();
+            }
+        });
+
         return view;
     }
 
@@ -73,11 +84,7 @@ public class CrimeListFragment extends ListFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_new_crime:
-                Crime crime = new Crime();
-                CrimeLab.getInstance(getActivity()).addCrime(crime);
-                Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
-                intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-                startActivityForResult(intent, 0);
+                addNewCrime();
                 return true;
             case R.id.menu_item_show_subtitle:
                 if (getActivity().getActionBar().getSubtitle() == null) {
@@ -138,5 +145,13 @@ public class CrimeListFragment extends ListFragment {
 
             return convertView;
         }
+    }
+
+    private void addNewCrime() {
+        Crime crime = new Crime();
+        CrimeLab.getInstance(getActivity()).addCrime(crime);
+        Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
+        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+        startActivityForResult(intent, 0);
     }
 }
