@@ -3,6 +3,7 @@ package com.bignerdranch.android.criminalintent;
 import android.content.Context;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,7 +21,7 @@ public class CriminalIntentJSONSerializer {
     }
 
     public void saveCrimes(ArrayList<Crime> crimes)
-            throws IOException {
+            throws JSONException, IOException {
         // build an array in JSON
         JSONArray array = new JSONArray();
         for (Crime c : crimes)
