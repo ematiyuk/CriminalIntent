@@ -67,6 +67,9 @@ public class CrimeListFragment extends ListFragment {
             }
         });
 
+        ListView listView = (ListView) view.findViewById(android.R.id.list);
+        registerForContextMenu(listView);
+
         return view;
     }
 
