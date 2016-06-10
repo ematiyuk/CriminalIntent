@@ -196,8 +196,7 @@ public class CrimeListFragment extends ListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
     }
 
