@@ -69,7 +69,14 @@ public class CrimeListFragment extends ListFragment {
         });
 
         ListView listView = (ListView) view.findViewById(android.R.id.list);
-        registerForContextMenu(listView);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            // use floating context menus on Froyo and Gingerbread
+            registerForContextMenu(listView);
+        } else {
+            // use contextual action bar on Honeycomb and higher
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        }
+
 
         return view;
     }
