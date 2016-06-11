@@ -231,8 +231,11 @@ public class CrimeListFragment extends ListFragment {
     private void addNewCrime() {
         Crime crime = new Crime();
         CrimeLab.getInstance(getActivity()).addCrime(crime);
+        CrimeLab.getInstance(getActivity()).saveCrimes();
+
         Intent intent = new Intent(getActivity(), CrimeActivity.class);
         intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+
         startActivityForResult(intent, 0);
     }
 }

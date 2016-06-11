@@ -68,10 +68,12 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
+            CrimeLab.getInstance(getActivity()).saveCrimes();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
             updateTime();
+            CrimeLab.getInstance(getActivity()).saveCrimes();
         }
     }
 
@@ -100,6 +102,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
+                CrimeLab.getInstance(getActivity()).saveCrimes();
             }
 
             @Override
@@ -145,6 +148,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
+                CrimeLab.getInstance(getActivity()).saveCrimes();
             }
         });
 
@@ -184,11 +188,5 @@ public class CrimeFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        CrimeLab.getInstance(getActivity()).saveCrimes();
     }
 }
