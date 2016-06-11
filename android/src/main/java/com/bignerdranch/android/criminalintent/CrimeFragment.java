@@ -163,6 +163,11 @@ public class CrimeFragment extends Fragment {
                     NavUtils.navigateUpFromSameTask(getActivity());
                 }
                 return true;
+            case R.id.menu_item_delete_crime:
+                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
+                CrimeLab.getInstance(getActivity()).saveCrimes();
+                getActivity().finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
