@@ -20,6 +20,12 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CrimeListActivity"/>
         </activity>
+        <activity
+            android:name=".CrimeActivity"
+            android:label="@string/new_crime" >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CrimeListActivity"/>
+        </activity>
     </application>
 
 </manifest>
