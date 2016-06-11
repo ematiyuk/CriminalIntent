@@ -192,7 +192,7 @@ public class CrimeListFragment extends ListFragment {
         // start CrimePagerActivity with this crime
         Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
         intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     @Override
