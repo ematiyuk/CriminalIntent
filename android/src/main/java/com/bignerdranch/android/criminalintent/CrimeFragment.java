@@ -2,6 +2,8 @@ package com.bignerdranch.android.criminalintent;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -164,9 +166,20 @@ public class CrimeFragment extends Fragment {
                 }
                 return true;
             case R.id.menu_item_delete_crime:
-                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
-                CrimeLab.getInstance(getActivity()).saveCrimes();
-                getActivity().finish();
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.delete_crime)
+                        .setMessage(R.string.delete_crime_dialog_info_msg)
+                        .setNeutralButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
+                                CrimeLab.getInstance(getActivity()).saveCrimes();
+                                getActivity().finish();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
