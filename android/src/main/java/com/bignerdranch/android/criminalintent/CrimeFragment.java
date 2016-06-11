@@ -35,6 +35,7 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_TIME = 1;
 
     private Crime mCrime;
+    private CrimeLab mCrimeLabInstance;
 
     private EditText mTitleField;
     private Button mDateButton;
@@ -48,7 +49,8 @@ public class CrimeFragment extends Fragment {
         /* retrieve crimeId argument from Fragment Bundle */
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
-        mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
+        mCrimeLabInstance = CrimeLab.getInstance(getActivity());
+        mCrime = mCrimeLabInstance.getCrime(crimeId);
 
         setHasOptionsMenu(true); // turn on options menu handling
     }
@@ -68,12 +70,12 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
-            CrimeLab.getInstance(getActivity()).saveCrimes();
+            mCrimeLabInstance.saveCrimes();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
             updateTime();
-            CrimeLab.getInstance(getActivity()).saveCrimes();
+            mCrimeLabInstance.saveCrimes();
         }
     }
 
@@ -102,7 +104,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
-                CrimeLab.getInstance(getActivity()).saveCrimes();
+                mCrimeLabInstance.saveCrimes();
             }
 
             @Override
@@ -148,7 +150,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
-                CrimeLab.getInstance(getActivity()).saveCrimes();
+                mCrimeLabInstance.saveCrimes();
             }
         });
 
@@ -177,8 +179,8 @@ public class CrimeFragment extends Fragment {
                         .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
-                                CrimeLab.getInstance(getActivity()).saveCrimes();
+                                mCrimeLabInstance.deleteCrime(mCrime);
+                                mCrimeLabInstance.saveCrimes();
                                 getActivity().finish();
                             }
                         })
