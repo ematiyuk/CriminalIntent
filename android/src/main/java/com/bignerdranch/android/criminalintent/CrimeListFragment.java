@@ -1,6 +1,8 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -102,19 +104,39 @@ public class CrimeListFragment extends ListFragment {
                 }
 
                 @Override
-                public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.menu_item_delete_crime:
-                            CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
-                            CrimeLab crimeLab = mCrimeLabInstance;
-                            for (int i = adapter.getCount() - 1; i >= 0; i--) {
-                                if (getListView().isItemChecked(i)) {
-                                    crimeLab.deleteCrime(adapter.getItem(i));
-                                }
+                            final CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
+                            final int totalItemsNumber = adapter.getCount();
+                            int selectedItemsNumber = 0;
+                            for (int i = totalItemsNumber - 1; i >= 0; i--) {
+                                if (getListView().isItemChecked(i))
+                                    selectedItemsNumber++;
                             }
-                            actionMode.finish();
-                            adapter.notifyDataSetChanged();
-                            crimeLab.saveCrimes();
+                            int messageId = (selectedItemsNumber > 1) ?
+                                    R.string.delete_multiple_crimes_dialog_info_msg :
+                                    R.string.delete_crime_dialog_info_msg;
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(R.string.delete_crime)
+                                    .setMessage(messageId)
+                                    .setNeutralButton(android.R.string.cancel, null)
+                                    .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int which) {
+                                            CrimeLab crimeLab = mCrimeLabInstance;
+                                            for (int i = totalItemsNumber - 1; i >= 0; i--) {
+                                                if (getListView().isItemChecked(i)) {
+                                                    crimeLab.deleteCrime(adapter.getItem(i));
+                                                }
+                                            }
+                                            actionMode.finish();
+                                            adapter.notifyDataSetChanged();
+                                            crimeLab.saveCrimes();
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
                             return true;
                         default:
                             return false;

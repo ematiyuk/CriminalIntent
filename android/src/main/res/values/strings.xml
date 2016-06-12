@@ -16,4 +16,5 @@
     <string name="error_saving_crimes_msg">Failed to save crimes</string>
     <string name="error_loading_crimes_msg">Failed to load crimes</string>
     <string name="delete_crime_dialog_info_msg">The crime will be deleted.</string>
+    <string name="delete_multiple_crimes_dialog_info_msg">These crimes will be deleted.</string>
 </resources>
