@@ -2,6 +2,8 @@ package com.bignerdranch.android.criminalintent;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +35,7 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_TIME = 1;
 
     private Crime mCrime;
+    private CrimeLab mCrimeLabInstance;
 
     private EditText mTitleField;
     private Button mDateButton;
@@ -44,7 +49,8 @@ public class CrimeFragment extends Fragment {
         /* retrieve crimeId argument from Fragment Bundle */
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
-        mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
+        mCrimeLabInstance = CrimeLab.getInstance(getActivity());
+        mCrime = mCrimeLabInstance.getCrime(crimeId);
 
         setHasOptionsMenu(true); // turn on options menu handling
     }
@@ -64,10 +70,12 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
+            mCrimeLabInstance.saveCrimes();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
             updateTime();
+            mCrimeLabInstance.saveCrimes();
         }
     }
 
@@ -96,6 +104,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
+                mCrimeLabInstance.saveCrimes();
             }
 
             @Override
@@ -141,10 +150,17 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
+                mCrimeLabInstance.saveCrimes();
             }
         });
 
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime, menu);
     }
 
     @Override
@@ -155,14 +171,24 @@ public class CrimeFragment extends Fragment {
                     NavUtils.navigateUpFromSameTask(getActivity());
                 }
                 return true;
+            case R.id.menu_item_delete_crime:
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.delete_crime)
+                        .setMessage(R.string.delete_crime_dialog_info_msg)
+                        .setNeutralButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mCrimeLabInstance.deleteCrime(mCrime);
+                                mCrimeLabInstance.saveCrimes();
+                                getActivity().finish();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        CrimeLab.getInstance(getActivity()).saveCrimes();
     }
 }
