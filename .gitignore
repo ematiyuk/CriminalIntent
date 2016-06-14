@@ -33,6 +33,5 @@ captures/
 
 # others
 *.iml
-/local.properties
 /.idea
 .DS_Store
