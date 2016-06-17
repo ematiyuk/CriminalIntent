@@ -70,12 +70,10 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
-            mCrimeLabInstance.saveCrimes();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
             updateTime();
-            mCrimeLabInstance.saveCrimes();
         }
     }
 
@@ -104,7 +102,6 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
-                mCrimeLabInstance.saveCrimes();
             }
 
             @Override
@@ -150,7 +147,6 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
-                mCrimeLabInstance.saveCrimes();
             }
         });
 
@@ -180,7 +176,6 @@ public class CrimeFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 mCrimeLabInstance.deleteCrime(mCrime);
-                                mCrimeLabInstance.saveCrimes();
                                 getActivity().finish();
                             }
                         })

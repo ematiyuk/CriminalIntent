@@ -124,15 +124,13 @@ public class CrimeListFragment extends ListFragment {
                                     .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
-                                            CrimeLab crimeLab = mCrimeLabInstance;
                                             for (int i = totalItemsNumber - 1; i >= 0; i--) {
                                                 if (getListView().isItemChecked(i)) {
-                                                    crimeLab.deleteCrime(adapter.getItem(i));
+                                                    mCrimeLabInstance.deleteCrime(adapter.getItem(i));
                                                 }
                                             }
                                             actionMode.finish();
                                             adapter.notifyDataSetChanged();
-                                            crimeLab.saveCrimes();
                                         }
                                     })
                                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -203,7 +201,6 @@ public class CrimeListFragment extends ListFragment {
             case R.id.menu_item_delete_crime:
                 mCrimeLabInstance.deleteCrime(crime);
                 adapter.notifyDataSetChanged();
-                mCrimeLabInstance.saveCrimes();
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -256,7 +253,6 @@ public class CrimeListFragment extends ListFragment {
     private void addNewCrime() {
         Crime crime = new Crime();
         mCrimeLabInstance.addCrime(crime);
-        mCrimeLabInstance.saveCrimes();
 
         Intent intent = new Intent(getActivity(), CrimeActivity.class);
         intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
