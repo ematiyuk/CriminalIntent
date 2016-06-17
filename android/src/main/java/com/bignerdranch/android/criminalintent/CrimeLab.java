@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class CrimeLab {
-    private ArrayList<Crime> mCrimes;
-
     private static CrimeLab sCrimeLab;
     private Context mAppContext;
     private SQLiteDatabase mDatabase;
@@ -18,8 +16,6 @@ public class CrimeLab {
     private CrimeLab(Context appContext) {
         mAppContext = appContext.getApplicationContext();
         mDatabase = new CrimeBaseHelper(mAppContext).getWritableDatabase();
-
-        mCrimes = new ArrayList<Crime>();
     }
 
     public static CrimeLab getInstance(Context c) {
@@ -30,22 +26,16 @@ public class CrimeLab {
     }
 
     public void addCrime(Crime crime) {
-        mCrimes.add(crime);
     }
 
     public void deleteCrime(Crime crime) {
-        mCrimes.remove(crime);
     }
 
     public ArrayList<Crime> getCrimes() {
-        return mCrimes;
+        return new ArrayList<Crime>();
     }
 
     public Crime getCrime(UUID id) {
-        for (Crime crime : mCrimes) {
-            if (crime.getId().equals(id))
-                return crime;
-        }
         return null;
     }
 }
