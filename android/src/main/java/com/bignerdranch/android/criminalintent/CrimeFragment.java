@@ -55,6 +55,13 @@ public class CrimeFragment extends Fragment {
         setHasOptionsMenu(true); // turn on options menu handling
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mCrimeLabInstance.updateCrime(mCrime);
+    }
+
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_CRIME_ID, crimeId);
