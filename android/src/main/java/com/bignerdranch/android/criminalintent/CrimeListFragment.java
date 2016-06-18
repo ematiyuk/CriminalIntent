@@ -26,6 +26,8 @@ import android.widget.TextView;
 import java.util.List;
 
 public class CrimeListFragment extends ListFragment {
+    private CrimeAdapter mAdapter;
+
     private boolean mSubtitleVisible;
 
     private Button mNewCrimeButton;
@@ -40,9 +42,6 @@ public class CrimeListFragment extends ListFragment {
         /* set the title of the fragment's host activity;
            this title will be displayed on the action bar (or title bar on older devices) */
         getActivity().setTitle(R.string.crimes_title);
-
-        CrimeAdapter adapter = new CrimeAdapter(mCrimes);
-        setListAdapter(adapter);
 
         setRetainInstance(true);
         mSubtitleVisible = false;
@@ -215,6 +214,28 @@ public class CrimeListFragment extends ListFragment {
         ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
     }
 
+    private void addNewCrime() {
+        Crime crime = new Crime();
+        CrimeLab.getInstance(getActivity()).addCrime(crime);
+
+        Intent intent = new Intent(getActivity(), CrimeActivity.class);
+        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+
+        startActivityForResult(intent, 0);
+    }
+
+    private void updateCrimeList() {
+        CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
+        List<Crime> crimes = crimeLab.getCrimes();
+
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            setListAdapter(mAdapter);
+        } else {
+            mAdapter.setCrimes(crimes);
+        }
+    }
+
     private class CrimeAdapter extends ArrayAdapter<Crime> {
 
         public CrimeAdapter(List<Crime> crimes) {
@@ -246,15 +267,5 @@ public class CrimeListFragment extends ListFragment {
             this.clear();
             this.addAll(crimes);
         }
-    }
-
-    private void addNewCrime() {
-        Crime crime = new Crime();
-        CrimeLab.getInstance(getActivity()).addCrime(crime);
-
-        Intent intent = new Intent(getActivity(), CrimeActivity.class);
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-
-        startActivityForResult(intent, 0);
     }
 }
