@@ -74,7 +74,7 @@ public class CrimeLab {
                 null, // having
                 null // orderBy
         );
-        
+
         return cursor;
     }
 }
