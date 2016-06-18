@@ -20,7 +20,11 @@ public class Crime {
     private boolean mSolved;
 
     public Crime() {
-        mId = UUID.randomUUID(); // generate unique identifier
+        this(UUID.randomUUID()); // generate unique identifier and pass it to alternative constructor
+    }
+
+    public Crime(UUID id) {
+        mId = id;
         mDate = new Date(); // sets mDate to the current date (the default date for a crime)
     }
 
