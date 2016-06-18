@@ -26,10 +26,7 @@ import android.widget.TextView;
 import java.util.List;
 
 public class CrimeListFragment extends ListFragment {
-    private List<Crime> mCrimes;
-
     private boolean mSubtitleVisible;
-    private CrimeLab mCrimeLabInstance;
 
     private Button mNewCrimeButton;
 
@@ -43,11 +40,6 @@ public class CrimeListFragment extends ListFragment {
         /* set the title of the fragment's host activity;
            this title will be displayed on the action bar (or title bar on older devices) */
         getActivity().setTitle(R.string.crimes_title);
-
-        mCrimeLabInstance = CrimeLab.getInstance(getActivity());
-
-        /* get the CrimeLab singleton and then get the list of crimes */
-        mCrimes = mCrimeLabInstance.getCrimes();
 
         CrimeAdapter adapter = new CrimeAdapter(mCrimes);
         setListAdapter(adapter);
@@ -126,7 +118,8 @@ public class CrimeListFragment extends ListFragment {
                                         public void onClick(DialogInterface dialogInterface, int which) {
                                             for (int i = totalItemsNumber - 1; i >= 0; i--) {
                                                 if (getListView().isItemChecked(i)) {
-                                                    mCrimeLabInstance.deleteCrime(adapter.getItem(i));
+                                                    CrimeLab.getInstance(getActivity())
+                                                            .deleteCrime(adapter.getItem(i));
                                                 }
                                             }
                                             actionMode.finish();
@@ -199,7 +192,7 @@ public class CrimeListFragment extends ListFragment {
 
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
-                mCrimeLabInstance.deleteCrime(crime);
+                CrimeLab.getInstance(getActivity()).deleteCrime(crime);
                 adapter.notifyDataSetChanged();
                 return true;
         }
@@ -252,7 +245,7 @@ public class CrimeListFragment extends ListFragment {
 
     private void addNewCrime() {
         Crime crime = new Crime();
-        mCrimeLabInstance.addCrime(crime);
+        CrimeLab.getInstance(getActivity()).addCrime(crime);
 
         Intent intent = new Intent(getActivity(), CrimeActivity.class);
         intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
