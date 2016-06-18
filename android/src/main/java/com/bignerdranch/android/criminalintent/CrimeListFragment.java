@@ -241,6 +241,11 @@ public class CrimeListFragment extends ListFragment {
 
             return convertView;
         }
+
+        public void setCrimes(List<Crime> crimes) {
+            this.clear();
+            this.addAll(crimes);
+        }
     }
 
     private void addNewCrime() {
