@@ -40,8 +40,22 @@ public class CrimeLab {
     public void deleteCrime(Crime crime) {
     }
 
-    public ArrayList<Crime> getCrimes() {
-        return new ArrayList<Crime>();
+    public List<Crime> getCrimes() {
+        List<Crime> crimes = new ArrayList<Crime>();
+
+        CrimeCursorWrapper cursor = queryCrimes(null, null);
+
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                crimes.add(cursor.getCrime());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return crimes;
     }
 
     public Crime getCrime(UUID id) {

@@ -23,10 +23,10 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CrimeListFragment extends ListFragment {
-    private ArrayList<Crime> mCrimes;
+    private List<Crime> mCrimes;
 
     private boolean mSubtitleVisible;
     private CrimeLab mCrimeLabInstance;
@@ -224,7 +224,7 @@ public class CrimeListFragment extends ListFragment {
 
     private class CrimeAdapter extends ArrayAdapter<Crime> {
 
-        public CrimeAdapter(ArrayList<Crime> crimes) {
+        public CrimeAdapter(List<Crime> crimes) {
             super(getActivity(), 0, crimes);
         }
 

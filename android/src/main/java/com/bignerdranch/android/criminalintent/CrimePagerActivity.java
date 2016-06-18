@@ -7,12 +7,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CrimePagerActivity extends FragmentActivity {
     private ViewPager mViewPager;
-    private ArrayList<Crime> mCrimes;
+    private List<Crime> mCrimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
