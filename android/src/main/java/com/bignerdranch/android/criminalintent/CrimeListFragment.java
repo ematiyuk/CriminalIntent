@@ -87,12 +87,11 @@ public class CrimeListFragment extends ListFragment {
                             if (getListView().isItemChecked(i))
                                 selectedItemsNumber++;
                         }
-                        int messageId = (selectedItemsNumber > 1) ?
-                                R.string.delete_multiple_crimes_dialog_info_msg :
-                                R.string.delete_crime_dialog_info_msg;
+                        String message = getResources().getQuantityString(
+                                R.plurals.dialog_msg_plural, selectedItemsNumber);
                         new AlertDialog.Builder(getActivity())
                                 .setTitle(R.string.delete_crime)
-                                .setMessage(messageId)
+                                .setMessage(message)
                                 .setNeutralButton(android.R.string.cancel, null)
                                 .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
                                     @Override

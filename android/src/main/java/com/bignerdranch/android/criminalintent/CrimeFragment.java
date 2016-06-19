@@ -175,7 +175,7 @@ public class CrimeFragment extends Fragment {
             case R.id.menu_item_delete_crime:
                 new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.delete_crime)
-                        .setMessage(R.string.delete_crime_dialog_info_msg)
+                        .setMessage(R.string.delete_crime_dialog_msg)
                         .setNeutralButton(android.R.string.cancel, null)
                         .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
                             @Override
