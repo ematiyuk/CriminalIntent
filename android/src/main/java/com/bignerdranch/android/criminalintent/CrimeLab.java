@@ -1,70 +1,116 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
+
+import com.bignerdranch.android.criminalintent.database.CrimeBaseHelper;
+import com.bignerdranch.android.criminalintent.database.CrimeCursorWrapper;
+import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CrimeLab {
-    private static final String TAG = "CrimeLAb";
-    private static final String FILENAME = "crimes.json";
-
-    private ArrayList<Crime> mCrimes;
-    private CriminalIntentJSONSerializer mSerializer;
-
     private static CrimeLab sCrimeLab;
     private Context mAppContext;
+    private SQLiteDatabase mDatabase;
 
     private CrimeLab(Context appContext) {
-        mAppContext = appContext;
-        mSerializer = new CriminalIntentJSONSerializer(mAppContext, FILENAME);
-        try {
-            mCrimes = mSerializer.loadCrimes();
-        } catch (Exception e) {
-            mCrimes = new ArrayList<Crime>();
-            Log.e(TAG, "Error loading crimes: ", e);
-            Toast.makeText(mAppContext, R.string.error_loading_crimes_msg, Toast.LENGTH_LONG).show();
-        }
+        mAppContext = appContext.getApplicationContext();
+        mDatabase = new CrimeBaseHelper(mAppContext).getWritableDatabase();
     }
 
     public static CrimeLab getInstance(Context c) {
         if (sCrimeLab == null) {
-            sCrimeLab = new CrimeLab(c.getApplicationContext());
+            sCrimeLab = new CrimeLab(c);
         }
         return sCrimeLab;
     }
 
     public void addCrime(Crime crime) {
-        mCrimes.add(crime);
+        ContentValues values = getContentValues(crime);
+
+        mDatabase.insert(CrimeTable.NAME, null, values);
     }
 
     public void deleteCrime(Crime crime) {
-        mCrimes.remove(crime);
+        String uuidString = crime.getId().toString();
+
+        mDatabase.delete(CrimeTable.NAME,
+                CrimeTable.Cols.UUID + " = ?",
+                new String[] { uuidString });
     }
 
-    public boolean saveCrimes() {
+    public List<Crime> getCrimes() {
+        List<Crime> crimes = new ArrayList<Crime>();
+
+        CrimeCursorWrapper cursor = queryCrimes(null, null);
+
         try {
-            mSerializer.saveCrimes(mCrimes);
-            Log.d(TAG, "crimes saved to file");
-            return true;
-        } catch (Exception e) {
-            Log.e(TAG, "Error saving crimes: ", e);
-            Toast.makeText(mAppContext, R.string.error_saving_crimes_msg, Toast.LENGTH_LONG).show();
-            return false;
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                crimes.add(cursor.getCrime());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
         }
-    }
 
-    public ArrayList<Crime> getCrimes() {
-        return mCrimes;
+        return crimes;
     }
 
     public Crime getCrime(UUID id) {
-        for (Crime crime : mCrimes) {
-            if (crime.getId().equals(id))
-                return crime;
+        CrimeCursorWrapper cursor = queryCrimes(
+                CrimeTable.Cols.UUID + " = ?",
+                new String[] { id.toString() }
+        );
+
+        try {
+            if (cursor.getCount() == 0) { // there is no matching crime in CrimeTable
+                return null;
+            }
+
+            cursor.moveToFirst();
+            return cursor.getCrime();
+        } finally {
+            cursor.close();
         }
-        return null;
+    }
+
+    public void updateCrime(Crime crime) {
+        String uuidString = crime.getId().toString();
+        ContentValues values = getContentValues(crime);
+
+        mDatabase.update(CrimeTable.NAME, values,
+                CrimeTable.Cols.UUID + " = ?",
+                new String[] { uuidString });
+    }
+
+    private static ContentValues getContentValues(Crime crime) {
+        ContentValues values = new ContentValues();
+        values.put(CrimeTable.Cols.UUID, crime.getId().toString());
+        values.put(CrimeTable.Cols.TITLE, crime.getTitle());
+        values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
+        values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
+
+        return values;
+    }
+
+    private CrimeCursorWrapper queryCrimes(@Nullable String whereClause, @Nullable String[] whereArgs) {
+        Cursor cursor = mDatabase.query(
+                CrimeTable.NAME,
+                null, // columns - null selects all columns
+                whereClause,
+                whereArgs,
+                null, // groupBy
+                null, // having
+                null // orderBy
+        );
+
+        return new CrimeCursorWrapper(cursor);
     }
 }

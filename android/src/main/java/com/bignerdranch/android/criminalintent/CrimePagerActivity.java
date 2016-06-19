@@ -7,12 +7,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CrimePagerActivity extends FragmentActivity {
     private ViewPager mViewPager;
-    private ArrayList<Crime> mCrimes;
+    private List<Crime> mCrimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +37,6 @@ public class CrimePagerActivity extends FragmentActivity {
             }
         });
 
-        final UUID crimeId = (UUID) getIntent().getSerializableExtra(CrimeFragment.EXTRA_CRIME_ID);
-        for (int i = 0; i < mCrimes.size(); i++) {
-            if (mCrimes.get(i).getId().equals(crimeId)) {
-                mViewPager.setCurrentItem(i); // it is an initial pager item
-                setTitle(mCrimes.get(i).getTitle()); // set the title of the current pager item
-                break;
-            }
-        }
-
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -58,10 +49,20 @@ public class CrimePagerActivity extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 Crime crime = mCrimes.get(position);
-                if (crime.getTitle() != null) {
-                    setTitle(crime.getTitle());
+                if ((crime.getTitle() != null)) {
+                    setTitle(crime.getTitle()); // set the title of the current pager item
+                } else {
+                    setTitle("");
                 }
             }
         });
+
+        final UUID crimeId = (UUID) getIntent().getSerializableExtra(CrimeFragment.EXTRA_CRIME_ID);
+        for (int i = 0; i < mCrimes.size(); i++) {
+            if (mCrimes.get(i).getId().equals(crimeId)) {
+                mViewPager.setCurrentItem(i); // it is an initial pager item
+                break;
+            }
+        }
     }
 }
