@@ -98,8 +98,7 @@ public class CrimeListFragment extends ListFragment {
                 public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.menu_item_delete_crime:
-                            final CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
-                            final int totalItemsNumber = adapter.getCount();
+                            final int totalItemsNumber = mAdapter.getCount();
                             int selectedItemsNumber = 0;
                             for (int i = totalItemsNumber - 1; i >= 0; i--) {
                                 if (getListView().isItemChecked(i))
@@ -118,11 +117,11 @@ public class CrimeListFragment extends ListFragment {
                                             for (int i = totalItemsNumber - 1; i >= 0; i--) {
                                                 if (getListView().isItemChecked(i)) {
                                                     CrimeLab.getInstance(getActivity())
-                                                            .deleteCrime(adapter.getItem(i));
+                                                            .deleteCrime(mAdapter.getItem(i));
                                                 }
                                             }
                                             actionMode.finish();
-                                            adapter.notifyDataSetChanged();
+                                            updateCrimeList();
                                         }
                                     })
                                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -193,13 +192,12 @@ public class CrimeListFragment extends ListFragment {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
-        Crime crime = adapter.getItem(position);
+        Crime crime = mAdapter.getItem(position);
 
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
                 CrimeLab.getInstance(getActivity()).deleteCrime(crime);
-                adapter.notifyDataSetChanged();
+                updateCrimeList();
                 return true;
         }
         return super.onContextItemSelected(item);

@@ -35,7 +35,6 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_TIME = 1;
 
     private Crime mCrime;
-    private CrimeLab mCrimeLabInstance;
 
     private EditText mTitleField;
     private Button mDateButton;
@@ -49,8 +48,7 @@ public class CrimeFragment extends Fragment {
         /* retrieve crimeId argument from Fragment Bundle */
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
-        mCrimeLabInstance = CrimeLab.getInstance(getActivity());
-        mCrime = mCrimeLabInstance.getCrime(crimeId);
+        mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
 
         setHasOptionsMenu(true); // turn on options menu handling
     }
@@ -59,7 +57,7 @@ public class CrimeFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
-        mCrimeLabInstance.updateCrime(mCrime);
+        CrimeLab.getInstance(getActivity()).updateCrime(mCrime);
     }
 
     public static CrimeFragment newInstance(UUID crimeId) {
@@ -182,7 +180,7 @@ public class CrimeFragment extends Fragment {
                         .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                mCrimeLabInstance.deleteCrime(mCrime);
+                                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
                                 getActivity().finish();
                             }
                         })
