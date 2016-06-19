@@ -17,4 +17,8 @@
     <string name="error_loading_crimes_msg">Failed to load crimes</string>
     <string name="delete_crime_dialog_info_msg">The crime will be deleted.</string>
     <string name="delete_multiple_crimes_dialog_info_msg">These crimes will be deleted.</string>
+    <plurals name="subtitle_plural">
+        <item quantity="one">%1$s crime</item>
+        <item quantity="other">%1$s crimes</item>
+    </plurals>
 </resources>
