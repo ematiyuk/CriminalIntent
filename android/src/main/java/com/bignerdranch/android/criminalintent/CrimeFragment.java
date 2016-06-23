@@ -126,9 +126,11 @@ public class CrimeFragment extends Fragment {
 
                         if (phoneNumber != null) {
                             mCrime.setSuspectPhoneNumber(phoneNumber);
+                            mCallSuspectButton.setEnabled(true);
                         }
                     } else {
                         mCrime.setSuspectPhoneNumber(null);
+                        mCallSuspectButton.setEnabled(false);
                     }
                 }
             } finally {
@@ -239,11 +241,6 @@ public class CrimeFragment extends Fragment {
             mSuspectButton.setText(mCrime.getSuspectName());
         }
 
-        PackageManager packageManager = getActivity().getPackageManager();
-        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
-            mSuspectButton.setEnabled(false);
-        }
-
         mCallSuspectButton = (Button) v.findViewById(R.id.call_crime_suspect);
         mCallSuspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,6 +248,16 @@ public class CrimeFragment extends Fragment {
                 // do some stuff
             }
         });
+
+        if (mCrime.getSuspectPhoneNumber() == null) {
+            mCallSuspectButton.setEnabled(false);
+        }
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            mSuspectButton.setEnabled(false);
+            mCallSuspectButton.setEnabled(false);
+        }
 
         return v;
     }
