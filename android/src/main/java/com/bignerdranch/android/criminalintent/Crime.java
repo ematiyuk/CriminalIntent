@@ -10,6 +10,10 @@ public class Crime {
     private Date mDate;
     /** represents whether the crime has been solved */
     private boolean mSolved;
+    /** holds the name of a suspect */
+    private String mSuspectName;
+    /** holds the phone number of a suspect */
+    private String mSuspectPhoneNumber;
 
     public Crime() {
         this(UUID.randomUUID()); // generate unique identifier and pass it to alternative constructor
@@ -51,5 +55,21 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         this.mSolved = solved;
+    }
+
+    public String getSuspectName() {
+        return mSuspectName;
+    }
+
+    public void setSuspectName(String suspectName) {
+        this.mSuspectName = suspectName;
+    }
+
+    public String getSuspectPhoneNumber() {
+        return mSuspectPhoneNumber;
+    }
+
+    public void setSuspectPhoneNumber(String suspectPhoneNumber) {
+        this.mSuspectPhoneNumber = suspectPhoneNumber;
     }
 }
