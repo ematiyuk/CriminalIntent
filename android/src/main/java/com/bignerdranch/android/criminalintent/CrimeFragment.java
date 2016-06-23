@@ -108,7 +108,7 @@ public class CrimeFragment extends Fragment {
                 // pull out the first column of the first row of data - that is suspect's name
                 cursor.moveToFirst();
                 String suspect = cursor.getString(0);
-                mCrime.setSuspect(suspect);
+                mCrime.setSuspectName(suspect);
                 mSuspectButton.setText(suspect);
             } finally {
                 cursor.close();
@@ -214,8 +214,8 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        if (mCrime.getSuspect() != null) {
-            mSuspectButton.setText(mCrime.getSuspect());
+        if (mCrime.getSuspectName() != null) {
+            mSuspectButton.setText(mCrime.getSuspectName());
         }
 
         PackageManager packageManager = getActivity().getPackageManager();
@@ -279,7 +279,7 @@ public class CrimeFragment extends Fragment {
         String dateFormat = "EEE, MMM dd";
         String dateString = DateFormat.format(dateFormat, mCrime.getDate()).toString();
 
-        String suspect = mCrime.getSuspect();
+        String suspect = mCrime.getSuspectName();
         if (suspect == null) {
             suspect = getString(R.string.crime_report_no_suspect);
         } else {
