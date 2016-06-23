@@ -12,6 +12,8 @@ public class Crime {
     private boolean mSolved;
     /** holds the name of a suspect */
     private String mSuspectName;
+    /** holds the phone number of a suspect */
+    private String mSuspectPhoneNumber;
 
     public Crime() {
         this(UUID.randomUUID()); // generate unique identifier and pass it to alternative constructor
@@ -61,5 +63,13 @@ public class Crime {
 
     public void setSuspectName(String suspectName) {
         this.mSuspectName = suspectName;
+    }
+
+    public String getSuspectPhoneNumber() {
+        return mSuspectPhoneNumber;
+    }
+
+    public void setSuspectPhoneNumber(String suspectPhoneNumber) {
+        this.mSuspectPhoneNumber = suspectPhoneNumber;
     }
 }
