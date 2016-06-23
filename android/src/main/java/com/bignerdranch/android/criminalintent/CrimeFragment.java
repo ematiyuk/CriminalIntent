@@ -291,4 +291,29 @@ public class CrimeFragment extends Fragment {
 
         return report;
     }
+
+    private String retrieveContactPhoneNumber(String contactId) {
+        Cursor phoneNumberCursor = getActivity().getContentResolver()
+                .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                                + " = " + contactId, null, null);
+
+        if (phoneNumberCursor == null) {
+            return null;
+        }
+
+        String phoneNumber = null;
+        try {
+            if (phoneNumberCursor.moveToFirst()) {
+                phoneNumber = phoneNumberCursor
+                        .getString(phoneNumberCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            }
+        } finally {
+            phoneNumberCursor.close();
+        }
+
+        return phoneNumber;
+    }
 }
