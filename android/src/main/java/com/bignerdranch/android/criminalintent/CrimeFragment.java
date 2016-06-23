@@ -93,25 +93,46 @@ public class CrimeFragment extends Fragment {
             Uri contactUri = data.getData();
             // specify which fields we want the query to return values for
             String[] queryFields = new String[] {
-                    ContactsContract.Contacts.DISPLAY_NAME
+                    ContactsContract.Contacts._ID,
+                    ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts.HAS_PHONE_NUMBER
             };
             // perform the query - the contactUri is like a "where" clause here
-            Cursor cursor = getActivity().getContentResolver()
+            Cursor contactCursor = getActivity().getContentResolver()
                     .query(contactUri, queryFields, null, null, null);
 
+            if (contactCursor == null) {
+                return;
+            }
+
             try {
-                // double-check that you actually got results
-                if (cursor.getCount() == 0) {
+                // double-check that we actually got results
+                if (contactCursor.getCount() == 0) {
                     return;
                 }
 
-                // pull out the first column of the first row of data - that is suspect's name
-                cursor.moveToFirst();
-                String suspect = cursor.getString(0);
-                mCrime.setSuspectName(suspect);
-                mSuspectButton.setText(suspect);
+                // pull out the first column of the first row of data
+                if (contactCursor.moveToFirst()) {
+                    String contactId = contactCursor.getString(0); // _ID
+                    String name = contactCursor.getString(1); // DISPLAY_NAME
+                    String hasPhoneNumber = contactCursor.getString(2); // HAS_PHONE_NUMBER
+
+                    mCrime.setSuspectName(name);
+                    mSuspectButton.setText(name);
+
+                    // checks whether contact has at least one phone number
+                    if (hasPhoneNumber.equals("1")) {
+                        String phoneNumber = retrieveContactPhoneNumber(contactId);
+
+                        if (phoneNumber != null) {
+                            mCrime.setSuspectPhoneNumber(phoneNumber);
+                        }
+                    } else {
+                        mCrime.setSuspectPhoneNumber(null);
+                    }
+                }
             } finally {
-                cursor.close();
+                contactCursor.close();
             }
         }
     }
