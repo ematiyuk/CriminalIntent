@@ -245,7 +245,9 @@ public class CrimeFragment extends Fragment {
         mCallSuspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // do some stuff
+                Intent callContact = new Intent(Intent.ACTION_DIAL,
+                        Uri.parse("tel:" + mCrime.getSuspectPhoneNumber()));
+                startActivity(callContact);
             }
         });
 
