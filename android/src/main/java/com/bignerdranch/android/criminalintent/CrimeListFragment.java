@@ -1,10 +1,8 @@
 package com.bignerdranch.android.criminalintent;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.ActionMode;
@@ -23,49 +21,30 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CrimeListFragment extends ListFragment {
-    private ArrayList<Crime> mCrimes;
+
+    private CrimeAdapter mAdapter;
 
     private boolean mSubtitleVisible;
-    private CrimeLab mCrimeLabInstance;
 
     private Button mNewCrimeButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         /* explicitly tell the FragmentManager that our fragment should receive a call to
            onCreateOptionsMenu(...) */
         setHasOptionsMenu(true);
 
-        /* set the title of the fragment's host activity;
-           this title will be displayed on the action bar (or title bar on older devices) */
-        getActivity().setTitle(R.string.crimes_title);
-
-        mCrimeLabInstance = CrimeLab.getInstance(getActivity());
-
-        /* get the CrimeLab singleton and then get the list of crimes */
-        mCrimes = mCrimeLabInstance.getCrimes();
-
-        CrimeAdapter adapter = new CrimeAdapter(mCrimes);
-        setListAdapter(adapter);
-
         setRetainInstance(true);
-        mSubtitleVisible = false;
     }
 
-    @TargetApi(11)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            if (mSubtitleVisible) {
-                getActivity().getActionBar().setSubtitle(R.string.subtitle);
-            }
-        }
 
         mNewCrimeButton = (Button) view.findViewById(R.id.new_crime_button);
         mNewCrimeButton.setOnClickListener(new View.OnClickListener() {
@@ -76,95 +55,93 @@ public class CrimeListFragment extends ListFragment {
         });
 
         ListView listView = (ListView) view.findViewById(android.R.id.list);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            // use floating context menus on Froyo and Gingerbread
-            registerForContextMenu(listView);
-        } else {
-            // use contextual action bar on Honeycomb and higher
-            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
-            listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-                @Override
-                public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-                    // required, but not used in this implementation
-                }
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
+                // required, but not used in this implementation
+            }
 
-                // ActionMode.Callback methods
-                @Override
-                public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                    MenuInflater inflater = actionMode.getMenuInflater();
-                    inflater.inflate(R.menu.crime_list_item_context, menu);
-                    return true;
-                }
+            // ActionMode.Callback methods
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater inflater = actionMode.getMenuInflater();
+                inflater.inflate(R.menu.crime_list_item_context, menu);
+                return true;
+            }
 
-                @Override
-                public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                    return false;
-                    // required, but not used in this implementation
-                }
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+                // required, but not used in this implementation
+            }
 
-                @Override
-                public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.menu_item_delete_crime:
-                            final CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
-                            final int totalItemsNumber = adapter.getCount();
-                            int selectedItemsNumber = 0;
-                            for (int i = totalItemsNumber - 1; i >= 0; i--) {
-                                if (getListView().isItemChecked(i))
-                                    selectedItemsNumber++;
-                            }
-                            int messageId = (selectedItemsNumber > 1) ?
-                                    R.string.delete_multiple_crimes_dialog_info_msg :
-                                    R.string.delete_crime_dialog_info_msg;
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(R.string.delete_crime)
-                                    .setMessage(messageId)
-                                    .setNeutralButton(android.R.string.cancel, null)
-                                    .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int which) {
-                                            CrimeLab crimeLab = mCrimeLabInstance;
-                                            for (int i = totalItemsNumber - 1; i >= 0; i--) {
-                                                if (getListView().isItemChecked(i)) {
-                                                    crimeLab.deleteCrime(adapter.getItem(i));
-                                                }
+            @Override
+            public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_item_delete_crime:
+                        final int totalItemsNumber = mAdapter.getCount();
+                        int selectedItemsNumber = 0;
+                        for (int i = totalItemsNumber - 1; i >= 0; i--) {
+                            if (getListView().isItemChecked(i))
+                                selectedItemsNumber++;
+                        }
+                        String message = getResources().getQuantityString(
+                                R.plurals.dialog_msg_plural, selectedItemsNumber);
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(R.string.delete_crime)
+                                .setMessage(message)
+                                .setNeutralButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.delete_crime, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int which) {
+                                        for (int i = totalItemsNumber - 1; i >= 0; i--) {
+                                            if (getListView().isItemChecked(i)) {
+                                                CrimeLab.getInstance(getActivity())
+                                                        .deleteCrime(mAdapter.getItem(i));
                                             }
-                                            actionMode.finish();
-                                            adapter.notifyDataSetChanged();
-                                            crimeLab.saveCrimes();
                                         }
-                                    })
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
-                            return true;
-                        default:
-                            return false;
-                    }
+                                        actionMode.finish();
+                                        updateUI();
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                        return true;
+                    default:
+                        return false;
                 }
+            }
 
-                @Override
-                public void onDestroyActionMode(ActionMode actionMode) {
-                    // required, but not used in this implementation
-                }
-            });
-        }
-
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                // required, but not used in this implementation
+            }
+        });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateUI();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
-        MenuItem showSubtitle = menu.findItem(R.id.menu_item_show_subtitle);
-        if (mSubtitleVisible && showSubtitle != null) {
-            showSubtitle.setTitle(R.string.hide_subtitle);
+        MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
+        if (mSubtitleVisible) {
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        } else {
+            subtitleItem.setTitle(R.string.show_subtitle);
         }
     }
 
-    @TargetApi(11)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -172,19 +149,26 @@ public class CrimeListFragment extends ListFragment {
                 addNewCrime();
                 return true;
             case R.id.menu_item_show_subtitle:
-                if (getActivity().getActionBar().getSubtitle() == null) {
-                    getActivity().getActionBar().setSubtitle(R.string.subtitle);
-                    mSubtitleVisible = true;
-                    item.setTitle(R.string.hide_subtitle);
-                } else {
-                    getActivity().getActionBar().setSubtitle(null);
-                    mSubtitleVisible = false;
-                    item.setTitle(R.string.show_subtitle);
-                }
+                mSubtitleVisible = !mSubtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void updateSubtitle() {
+        CrimeLab crimelab = CrimeLab.getInstance(getActivity());
+        int crimeCount = crimelab.getCrimes().size();
+        String subtitle = getResources().getQuantityString(
+                R.plurals.subtitle_plural, crimeCount, crimeCount);
+
+        if (!mSubtitleVisible) {
+            subtitle = null;
+        }
+
+        getActivity().getActionBar().setSubtitle(subtitle);
     }
 
     @Override
@@ -196,14 +180,12 @@ public class CrimeListFragment extends ListFragment {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        CrimeAdapter adapter = (CrimeAdapter) getListAdapter();
-        Crime crime = adapter.getItem(position);
+        Crime crime = mAdapter.getItem(position);
 
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
-                mCrimeLabInstance.deleteCrime(crime);
-                adapter.notifyDataSetChanged();
-                mCrimeLabInstance.saveCrimes();
+                CrimeLab.getInstance(getActivity()).deleteCrime(crime);
+                updateUI();
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -220,14 +202,33 @@ public class CrimeListFragment extends ListFragment {
         startActivityForResult(intent, 1);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
+    private void addNewCrime() {
+        Crime crime = new Crime();
+        CrimeLab.getInstance(getActivity()).addCrime(crime);
+
+        Intent intent = new Intent(getActivity(), CrimeActivity.class);
+        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+
+        startActivityForResult(intent, 0);
+    }
+
+    private void updateUI() {
+        CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
+        List<Crime> crimes = crimeLab.getCrimes();
+
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            setListAdapter(mAdapter);
+        } else {
+            mAdapter.setCrimes(crimes);
+        }
+
+        updateSubtitle();
     }
 
     private class CrimeAdapter extends ArrayAdapter<Crime> {
 
-        public CrimeAdapter(ArrayList<Crime> crimes) {
+        public CrimeAdapter(List<Crime> crimes) {
             super(getActivity(), 0, crimes);
         }
 
@@ -251,16 +252,10 @@ public class CrimeListFragment extends ListFragment {
 
             return convertView;
         }
-    }
 
-    private void addNewCrime() {
-        Crime crime = new Crime();
-        mCrimeLabInstance.addCrime(crime);
-        mCrimeLabInstance.saveCrimes();
-
-        Intent intent = new Intent(getActivity(), CrimeActivity.class);
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-
-        startActivityForResult(intent, 0);
+        public void setCrimes(List<Crime> crimes) {
+            this.clear();
+            this.addAll(crimes);
+        }
     }
 }
