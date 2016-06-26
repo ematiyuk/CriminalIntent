@@ -5,6 +5,10 @@
     android:versionName="alpha">
 
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18"
+        />
 
     <application
         android:allowBackup="true"
