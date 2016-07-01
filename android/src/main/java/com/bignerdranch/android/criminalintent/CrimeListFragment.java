@@ -1,6 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +31,21 @@ public class CrimeListFragment extends ListFragment {
     private boolean mSubtitleVisible;
 
     private Button mNewCrimeButton;
+    private Callbacks mCallbacks;
+
+    /**
+     * Required interface for hosting activities
+     */
+    public interface Callbacks {
+
+        void onCrimeSelected(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks)context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +144,12 @@ public class CrimeListFragment extends ListFragment {
         super.onResume();
 
         updateUI();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     @Override
