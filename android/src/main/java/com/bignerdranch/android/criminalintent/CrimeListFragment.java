@@ -218,20 +218,15 @@ public class CrimeListFragment extends ListFragment {
         // get the Crime from the adapter
         Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
 
-        // start CrimePagerActivity with this crime
-        Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-        startActivityForResult(intent, 1);
+        mCallbacks.onCrimeSelected(crime);
     }
 
     private void addNewCrime() {
         Crime crime = new Crime();
         CrimeLab.getInstance(getActivity()).addCrime(crime);
 
-        Intent intent = new Intent(getActivity(), CrimeActivity.class);
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-
-        startActivityForResult(intent, 0);
+        ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
+        mCallbacks.onCrimeSelected(crime);
     }
 
     private void updateUI() {
