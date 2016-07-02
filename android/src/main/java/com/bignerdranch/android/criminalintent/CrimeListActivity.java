@@ -44,7 +44,7 @@ public class CrimeListActivity extends SingleFragmentActivity
     @Override
     public void onCrimeUpdated(Crime crime) {
         CrimeLab.getInstance(this).updateCrime(crime);
-        
+
         FragmentManager fm = getSupportFragmentManager();
         CrimeListFragment listFragment = (CrimeListFragment)
                 fm.findFragmentById(R.id.fragmentContainer);

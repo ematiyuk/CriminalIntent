@@ -114,10 +114,12 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
+            mCallbacks.onCrimeUpdated(mCrime);
             updateDate();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
+            mCallbacks.onCrimeUpdated(mCrime);
             updateTime();
         } else if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
@@ -147,9 +149,6 @@ public class CrimeFragment extends Fragment {
                     String name = contactCursor.getString(1); // DISPLAY_NAME
                     String hasPhoneNumber = contactCursor.getString(2); // HAS_PHONE_NUMBER
 
-                    mCrime.setSuspectName(name);
-                    mSuspectButton.setText(name);
-
                     // checks whether contact has at least one phone number
                     if (hasPhoneNumber.equals("1")) {
                         String phoneNumber = retrieveContactPhoneNumber(contactId);
@@ -162,12 +161,17 @@ public class CrimeFragment extends Fragment {
                         mCrime.setSuspectPhoneNumber(null);
                         mCallSuspectButton.setEnabled(false);
                     }
+
+                    mCrime.setSuspectName(name);
+                    mCallbacks.onCrimeUpdated(mCrime);
+                    mSuspectButton.setText(name);
                 }
             } finally {
                 contactCursor.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
             updatePhotoView();
+            mCallbacks.onCrimeUpdated(mCrime);
         }
     }
 
@@ -196,6 +200,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
+                mCallbacks.onCrimeUpdated(mCrime);
             }
 
             @Override
@@ -241,6 +246,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
+                mCallbacks.onCrimeUpdated(mCrime);
             }
         });
 
