@@ -42,6 +42,13 @@ public class CrimeListActivity extends SingleFragmentActivity
     }
 
     @Override
+    public void onCrimeCreated(Crime crime) {
+        Intent intent = new Intent(this, CrimeActivity.class);
+        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+        startActivity(intent);
+    }
+
+    @Override
     public void onCrimeUpdated(Crime crime) {
         CrimeLab.getInstance(this).updateCrime(crime);
 

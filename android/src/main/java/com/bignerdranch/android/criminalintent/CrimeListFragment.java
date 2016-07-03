@@ -37,8 +37,8 @@ public class CrimeListFragment extends ListFragment {
      * Required interface for hosting activities
      */
     public interface Callbacks {
-
         void onCrimeSelected(Crime crime);
+        void onCrimeCreated(Crime crime);
     }
 
     @Override
