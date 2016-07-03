@@ -48,12 +48,7 @@ public class CrimePagerActivity extends FragmentActivity implements CrimeFragmen
 
             @Override
             public void onPageSelected(int position) {
-                Crime crime = mCrimes.get(position);
-                if ((crime.getTitle() != null)) {
-                    setTitle(crime.getTitle()); // set the title of the current pager item
-                } else {
-                    setTitle("");
-                }
+                setCrimeTitle(mCrimes.get(position));
             }
         });
 
@@ -61,8 +56,17 @@ public class CrimePagerActivity extends FragmentActivity implements CrimeFragmen
         for (int i = 0; i < mCrimes.size(); i++) {
             if (mCrimes.get(i).getId().equals(crimeId)) {
                 mViewPager.setCurrentItem(i); // it is an initial pager item
+                setCrimeTitle(mCrimes.get(i));
                 break;
             }
+        }
+    }
+
+    private void setCrimeTitle(Crime crime) {
+        if ((crime.getTitle() != null)) {
+            setTitle(crime.getTitle()); // set the title of the current pager item
+        } else {
+            setTitle("");
         }
     }
 
