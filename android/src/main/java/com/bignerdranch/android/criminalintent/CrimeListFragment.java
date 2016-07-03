@@ -31,6 +31,8 @@ public class CrimeListFragment extends ListFragment {
     private boolean mSubtitleVisible;
 
     private Button mNewCrimeButton;
+
+    private Crime mSelectedCrime;
     private Callbacks mCallbacks;
 
     /**
@@ -119,6 +121,21 @@ public class CrimeListFragment extends ListFragment {
                                             }
                                         }
                                         actionMode.finish();
+
+                                        if (null != getActivity()
+                                                .findViewById(R.id.detailFragmentContainer)) {
+                                            // this check is for tablet version of code only
+                                            if (mSelectedCrime != null) {
+                                                // .getCrime() returns null if there is no
+                                                // current selected crime in db
+                                                mCallbacks.onCrimeSelected(CrimeLab
+                                                        .getInstance(getActivity())
+                                                        .getCrime(mSelectedCrime.getId()));
+                                            } else {
+                                                mCallbacks.onCrimeSelected(null);
+                                            }
+                                        }
+
                                         updateUI();
                                     }
                                 })
@@ -217,6 +234,7 @@ public class CrimeListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // get the Crime from the adapter
         Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
+        mSelectedCrime = crime;
 
         mCallbacks.onCrimeSelected(crime);
     }
