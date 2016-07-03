@@ -30,13 +30,15 @@ public class CrimeListActivity extends SingleFragmentActivity
             FragmentTransaction ft = fm.beginTransaction();
 
             Fragment oldDetail = fm.findFragmentById(R.id.detailFragmentContainer);
-            Fragment newDetail = CrimeFragment.newInstance(crime.getId());
 
             if (oldDetail != null) {
                 ft.remove(oldDetail);
             }
 
-            ft.add(R.id.detailFragmentContainer, newDetail);
+            if (crime != null) {
+                Fragment newDetail = CrimeFragment.newInstance(crime.getId());
+                ft.add(R.id.detailFragmentContainer, newDetail);
+            }
             ft.commit();
         }
     }
