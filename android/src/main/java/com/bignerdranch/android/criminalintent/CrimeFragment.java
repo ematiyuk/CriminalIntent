@@ -361,7 +361,12 @@ public class CrimeFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
-                                getActivity().finish();
+                                if (null != getActivity().findViewById(R.id.detailFragmentContainer)) {
+                                    mCallbacks.onCrimeUpdated(mCrime);
+                                    mCallbacks.onCrimeDeleted(mCrime);
+                                } else {
+                                    getActivity().finish();
+                                }
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
