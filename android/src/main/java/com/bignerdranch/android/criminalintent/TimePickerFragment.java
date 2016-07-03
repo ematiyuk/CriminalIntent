@@ -10,6 +10,8 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.TimePicker;
 
+import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

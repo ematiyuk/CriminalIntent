@@ -1,12 +1,11 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.ActionMode;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,12 +13,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.bignerdranch.android.criminalintent.model.Crime;
+import com.bignerdranch.android.criminalintent.model.CrimeLab;
+import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
 
 import java.util.List;
 
@@ -30,6 +32,23 @@ public class CrimeListFragment extends ListFragment {
     private boolean mSubtitleVisible;
 
     private Button mNewCrimeButton;
+
+    private Crime mSelectedCrime;
+    private Callbacks mCallbacks;
+
+    /**
+     * Required interface for hosting activities
+     */
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+        void onCrimeCreated(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks)context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +122,21 @@ public class CrimeListFragment extends ListFragment {
                                             }
                                         }
                                         actionMode.finish();
+
+                                        if (null != getActivity()
+                                                .findViewById(R.id.detailFragmentContainer)) {
+                                            // this check is for tablet version of code only
+                                            if (mSelectedCrime != null) {
+                                                // .getCrime() returns null if there is no
+                                                // current selected crime in db
+                                                mCallbacks.onCrimeSelected(CrimeLab
+                                                        .getInstance(getActivity())
+                                                        .getCrime(mSelectedCrime.getId()));
+                                            } else {
+                                                mCallbacks.onCrimeSelected(null);
+                                            }
+                                        }
+
                                         updateUI();
                                     }
                                 })
@@ -128,6 +162,12 @@ public class CrimeListFragment extends ListFragment {
         super.onResume();
 
         updateUI();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     @Override
@@ -172,47 +212,28 @@ public class CrimeListFragment extends ListFragment {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int position = info.position;
-        Crime crime = mAdapter.getItem(position);
-
-        switch (item.getItemId()) {
-            case R.id.menu_item_delete_crime:
-                CrimeLab.getInstance(getActivity()).deleteCrime(crime);
-                updateUI();
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // get the Crime from the adapter
         Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
+        mSelectedCrime = crime;
 
-        // start CrimePagerActivity with this crime
-        Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-        startActivityForResult(intent, 1);
+        mCallbacks.onCrimeSelected(crime);
     }
 
     private void addNewCrime() {
         Crime crime = new Crime();
         CrimeLab.getInstance(getActivity()).addCrime(crime);
 
-        Intent intent = new Intent(getActivity(), CrimeActivity.class);
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+        updateUI();
 
-        startActivityForResult(intent, 0);
+        if (getActivity().findViewById(R.id.detailFragmentContainer) != null) {
+            mCallbacks.onCrimeSelected(crime);
+        } else {
+            mCallbacks.onCrimeCreated(crime);
+        }
     }
 
-    private void updateUI() {
+    public void updateUI() {
         CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 

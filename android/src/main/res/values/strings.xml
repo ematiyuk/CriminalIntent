@@ -37,4 +37,5 @@
     <string name="crime_report_subject">%s Crime Report</string>
     <string name="send_report">Send crime report via</string>
     <string name="call_suspect_text">Make a call</string>
+    <string name="no_photo_text">No photo</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.bignerdranch.android.criminalintent;
+package com.bignerdranch.android.criminalintent.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -45,6 +45,8 @@ public class CrimeLab {
         mDatabase.delete(CrimeTable.NAME,
                 CrimeTable.Cols.UUID + " = ?",
                 new String[] { uuidString });
+
+        deletePhotoFileFromStorage(crime.getPhotoFilename());
     }
 
     public List<Crime> getCrimes() {
@@ -126,5 +128,11 @@ public class CrimeLab {
         }
 
         return new File(externalFilesDir, crime.getPhotoFilename());
+    }
+
+    private boolean deletePhotoFileFromStorage(String filename) {
+        File externalFilesDir = mAppContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        return (externalFilesDir != null) && new File(externalFilesDir, filename).delete();
     }
 }

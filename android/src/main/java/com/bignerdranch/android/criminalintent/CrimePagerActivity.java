@@ -7,10 +7,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.bignerdranch.android.criminalintent.model.Crime;
+import com.bignerdranch.android.criminalintent.model.CrimeLab;
+
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends FragmentActivity {
+public class CrimePagerActivity extends FragmentActivity implements CrimeFragment.Callbacks {
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
 
@@ -48,12 +51,7 @@ public class CrimePagerActivity extends FragmentActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Crime crime = mCrimes.get(position);
-                if ((crime.getTitle() != null)) {
-                    setTitle(crime.getTitle()); // set the title of the current pager item
-                } else {
-                    setTitle("");
-                }
+                setCrimeTitle(mCrimes.get(position));
             }
         });
 
@@ -61,8 +59,25 @@ public class CrimePagerActivity extends FragmentActivity {
         for (int i = 0; i < mCrimes.size(); i++) {
             if (mCrimes.get(i).getId().equals(crimeId)) {
                 mViewPager.setCurrentItem(i); // it is an initial pager item
+                setCrimeTitle(mCrimes.get(i));
                 break;
             }
         }
+    }
+
+    private void setCrimeTitle(Crime crime) {
+        if ((crime.getTitle() != null)) {
+            setTitle(crime.getTitle()); // set the title of the current pager item
+        } else {
+            setTitle("");
+        }
+    }
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+    }
+
+    @Override
+    public void onCrimeDeleted(Crime crime) {
     }
 }
