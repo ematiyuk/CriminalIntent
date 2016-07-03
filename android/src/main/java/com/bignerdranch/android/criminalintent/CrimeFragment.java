@@ -114,12 +114,12 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
-            mCallbacks.onCrimeUpdated(mCrime);
+            updateCrime();
             updateDate();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
-            mCallbacks.onCrimeUpdated(mCrime);
+            updateCrime();
             updateTime();
         } else if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
@@ -163,7 +163,7 @@ public class CrimeFragment extends Fragment {
                     }
 
                     mCrime.setSuspectName(name);
-                    mCallbacks.onCrimeUpdated(mCrime);
+                    updateCrime();
                     mSuspectButton.setText(name);
                 }
             } finally {
@@ -173,6 +173,11 @@ public class CrimeFragment extends Fragment {
             updatePhotoView();
             mCallbacks.onCrimeUpdated(mCrime);
         }
+    }
+
+    private void updateCrime() {
+        CrimeLab.getInstance(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     public void updateDate() {
@@ -200,7 +205,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
-                mCallbacks.onCrimeUpdated(mCrime);
+                updateCrime();
             }
 
             @Override
@@ -246,7 +251,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
-                mCallbacks.onCrimeUpdated(mCrime);
+                updateCrime();
             }
         });
 
