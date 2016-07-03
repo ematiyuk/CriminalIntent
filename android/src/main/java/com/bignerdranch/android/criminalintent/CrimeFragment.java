@@ -35,6 +35,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bignerdranch.android.criminalintent.model.Crime;
+import com.bignerdranch.android.criminalintent.model.CrimeLab;
+import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
+import com.bignerdranch.android.criminalintent.service.PictureUtils;
+
 import java.io.File;
 import java.util.Date;
 import java.util.UUID;
