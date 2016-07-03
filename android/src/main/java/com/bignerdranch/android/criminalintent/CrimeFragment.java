@@ -171,8 +171,8 @@ public class CrimeFragment extends Fragment {
                 contactCursor.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+            updateCrime();
             updatePhotoView();
-            mCallbacks.onCrimeUpdated(mCrime);
         }
     }
 
