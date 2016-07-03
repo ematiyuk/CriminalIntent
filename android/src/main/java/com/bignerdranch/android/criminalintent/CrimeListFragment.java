@@ -211,26 +211,6 @@ public class CrimeListFragment extends ListFragment {
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int position = info.position;
-        Crime crime = mAdapter.getItem(position);
-
-        switch (item.getItemId()) {
-            case R.id.menu_item_delete_crime:
-                CrimeLab.getInstance(getActivity()).deleteCrime(crime);
-                updateUI();
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // get the Crime from the adapter
         Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
