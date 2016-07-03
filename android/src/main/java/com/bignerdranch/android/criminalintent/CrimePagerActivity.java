@@ -69,4 +69,8 @@ public class CrimePagerActivity extends FragmentActivity implements CrimeFragmen
     @Override
     public void onCrimeUpdated(Crime crime) {
     }
+
+    @Override
+    public void onCrimeDeleted(Crime crime) {
+    }
 }
