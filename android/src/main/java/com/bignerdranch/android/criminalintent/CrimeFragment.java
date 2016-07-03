@@ -33,6 +33,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.Date;
@@ -329,9 +330,14 @@ public class CrimeFragment extends Fragment {
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                ImageFragment.newInstance(mPhotoFile.getAbsolutePath())
-                        .show(fm, DIALOG_IMAGE);
+                if (mPhotoView.getDrawable() != null) {
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    ImageFragment.newInstance(mPhotoFile.getAbsolutePath())
+                            .show(fm, DIALOG_IMAGE);
+                } else {
+                    Toast.makeText(getActivity(), R.string.no_photo_text, Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
         updatePhotoView();
