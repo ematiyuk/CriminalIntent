@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import android.support.v4.app.Fragment;
 
+import com.bignerdranch.android.criminalintent.model.Crime;
+
 public class CrimeActivity extends SingleFragmentActivity implements CrimeFragment.Callbacks {
     @Override
     protected Fragment createFragment() {

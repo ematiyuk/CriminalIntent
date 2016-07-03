@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bignerdranch.android.criminalintent.service.PictureUtils;
+
 public class ImageFragment extends DialogFragment {
     public static final String EXTRA_IMAGE_PATH = "com.bignerdranch.android.criminalintent.image_path";
 
