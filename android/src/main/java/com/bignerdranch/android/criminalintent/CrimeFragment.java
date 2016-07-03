@@ -219,6 +219,7 @@ public class CrimeFragment extends Fragment {
                 // this one too
             }
         });
+        mTitleField.requestFocus();
 
         mDateButton = (Button) v.findViewById(R.id.crime_date);
         updateDate();
