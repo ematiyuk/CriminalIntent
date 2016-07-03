@@ -3,6 +3,7 @@ package com.bignerdranch.android.criminalintent;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -60,6 +61,18 @@ public class CrimeFragment extends Fragment {
     private Button mCallSuspectButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
+        void onCrimeDeleted(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks)context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +95,12 @@ public class CrimeFragment extends Fragment {
         CrimeLab.getInstance(getActivity()).updateCrime(mCrime);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_CRIME_ID, crimeId);
@@ -96,10 +115,12 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
+            updateCrime();
             updateDate();
         } else if (requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             mCrime.setDate(date);
+            updateCrime();
             updateTime();
         } else if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
@@ -129,9 +150,6 @@ public class CrimeFragment extends Fragment {
                     String name = contactCursor.getString(1); // DISPLAY_NAME
                     String hasPhoneNumber = contactCursor.getString(2); // HAS_PHONE_NUMBER
 
-                    mCrime.setSuspectName(name);
-                    mSuspectButton.setText(name);
-
                     // checks whether contact has at least one phone number
                     if (hasPhoneNumber.equals("1")) {
                         String phoneNumber = retrieveContactPhoneNumber(contactId);
@@ -144,13 +162,23 @@ public class CrimeFragment extends Fragment {
                         mCrime.setSuspectPhoneNumber(null);
                         mCallSuspectButton.setEnabled(false);
                     }
+
+                    mCrime.setSuspectName(name);
+                    updateCrime();
+                    mSuspectButton.setText(name);
                 }
             } finally {
                 contactCursor.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+            updateCrime();
             updatePhotoView();
         }
+    }
+
+    private void updateCrime() {
+        CrimeLab.getInstance(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     public void updateDate() {
@@ -178,6 +206,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
+                updateCrime();
             }
 
             @Override
@@ -223,6 +252,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // set the crime's solved property
                 mCrime.setSolved(isChecked);
+                updateCrime();
             }
         });
 
@@ -331,7 +361,12 @@ public class CrimeFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
-                                getActivity().finish();
+                                if (null != getActivity().findViewById(R.id.detailFragmentContainer)) {
+                                    mCallbacks.onCrimeUpdated(mCrime);
+                                    mCallbacks.onCrimeDeleted(mCrime);
+                                } else {
+                                    getActivity().finish();
+                                }
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
