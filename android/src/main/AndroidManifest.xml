@@ -23,16 +23,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CrimePagerActivity"
-            android:label="@string/app_name">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CrimeListActivity"/>
+        <activity
+            android:name=".CrimePagerActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".CrimeListActivity">
         </activity>
         <activity
             android:name=".CrimeActivity"
-            android:label="@string/new_crime" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CrimeListActivity"/>
+            android:label="@string/new_crime"
+            android:parentActivityName=".CrimeListActivity">
         </activity>
     </application>
 
