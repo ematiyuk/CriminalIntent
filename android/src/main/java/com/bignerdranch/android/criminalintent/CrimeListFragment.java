@@ -1,10 +1,11 @@
 package com.bignerdranch.android.criminalintent;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -140,7 +141,7 @@ public class CrimeListFragment extends ListFragment {
                                         updateUI();
                                     }
                                 })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setIcon(R.drawable.ic_dialog_alert)
                                 .show();
                         return true;
                     default:
@@ -208,7 +209,8 @@ public class CrimeListFragment extends ListFragment {
             subtitle = null;
         }
 
-        getActivity().getActionBar().setSubtitle(subtitle);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
     @Override
