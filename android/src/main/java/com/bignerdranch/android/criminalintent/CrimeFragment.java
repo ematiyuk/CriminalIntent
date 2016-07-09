@@ -9,13 +9,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -41,7 +39,6 @@ import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
 import com.bignerdranch.android.criminalintent.service.PictureUtils;
 
 import java.io.File;
-import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
@@ -50,10 +47,8 @@ public class CrimeFragment extends Fragment {
     private static final String DIALOG_DATE = "date";
     private static final String DIALOG_TIME = "time";
     private static final String DIALOG_IMAGE = "image";
-    private static final int REQUEST_DATE = 0;
-    private static final int REQUEST_TIME = 1;
-    private static final int REQUEST_CONTACT = 2;
-    private static final int REQUEST_PHOTO = 3;
+    private static final int REQUEST_CONTACT = 0;
+    private static final int REQUEST_PHOTO = 1;
 
     private Crime mCrime;
     private File mPhotoFile;
@@ -118,17 +113,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
-        if (requestCode == REQUEST_DATE) {
-            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
-            mCrime.setDate(date);
-            updateCrime();
-            updateDate();
-        } else if (requestCode == REQUEST_TIME) {
-            Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
-            mCrime.setDate(date);
-            updateCrime();
-            updateTime();
-        } else if (requestCode == REQUEST_CONTACT && data != null) {
+        if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
             // specify which fields we want the query to return values for
             String[] queryFields = new String[] {
@@ -227,10 +212,6 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
-                dialog.show(fm, DIALOG_DATE);
             }
         });
 
@@ -239,10 +220,6 @@ public class CrimeFragment extends Fragment {
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
-                dialog.show(fm, DIALOG_TIME);
             }
         });
 
