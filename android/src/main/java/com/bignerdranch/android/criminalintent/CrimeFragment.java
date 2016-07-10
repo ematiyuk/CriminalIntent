@@ -33,6 +33,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.datetimepicker.date.DatePickerDialog;
+import com.android.datetimepicker.time.RadialPickerLayout;
+import com.android.datetimepicker.time.TimePickerDialog;
 import com.bignerdranch.android.criminalintent.model.Crime;
 import com.bignerdranch.android.criminalintent.model.CrimeLab;
 import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
@@ -41,7 +44,8 @@ import com.bignerdranch.android.criminalintent.service.PictureUtils;
 import java.io.File;
 import java.util.UUID;
 
-public class CrimeFragment extends Fragment {
+public class CrimeFragment extends Fragment
+        implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     public static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
 
     private static final String DIALOG_DATE = "date";
@@ -353,6 +357,14 @@ public class CrimeFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+    }
+
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
     }
 
     private String getCrimeReport() {
