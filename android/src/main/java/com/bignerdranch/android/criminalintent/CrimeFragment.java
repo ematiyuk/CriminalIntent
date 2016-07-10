@@ -103,6 +103,15 @@ public class CrimeFragment extends Fragment
         super.onPause();
 
         CrimeLab.getInstance(getActivity()).updateCrime(mCrime);
+
+        DatePickerDialog datePickerDialog = (DatePickerDialog) getActivity()
+                .getFragmentManager().findFragmentByTag(DIALOG_DATE);
+        TimePickerDialog timePickerDialog = (TimePickerDialog) getActivity()
+                .getFragmentManager().findFragmentByTag(DIALOG_TIME);
+
+        /* dismiss Date or Time PickerDialog on (f.i.) change screen orientation */
+        if (datePickerDialog != null) datePickerDialog.dismiss();
+        if (timePickerDialog != null) timePickerDialog.dismiss();
     }
 
     @Override
