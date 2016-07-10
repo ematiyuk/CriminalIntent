@@ -221,6 +221,11 @@ public class CrimeFragment extends Fragment
 
             @Override
             public void onClick(View view) {
+                DatePickerDialog.newInstance(CrimeFragment.this,
+                        mCalendar.get(Calendar.YEAR),
+                        mCalendar.get(Calendar.MONTH),
+                        mCalendar.get(Calendar.DAY_OF_MONTH))
+                        .show(getActivity().getFragmentManager(), DIALOG_DATE);
             }
         });
 
@@ -229,6 +234,13 @@ public class CrimeFragment extends Fragment
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // get system default hour format
+                boolean is24HourMode = DateTimeFormat.is24HourFormat(getActivity());
+
+                TimePickerDialog.newInstance(CrimeFragment.this,
+                        mCalendar.get(Calendar.HOUR_OF_DAY),
+                        mCalendar.get(Calendar.MINUTE), is24HourMode)
+                        .show(getActivity().getFragmentManager(), DIALOG_TIME);
             }
         });
 
