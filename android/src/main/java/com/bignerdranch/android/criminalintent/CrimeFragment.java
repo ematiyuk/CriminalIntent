@@ -33,13 +33,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.datetimepicker.date.DatePickerDialog;
-import com.android.datetimepicker.time.RadialPickerLayout;
-import com.android.datetimepicker.time.TimePickerDialog;
 import com.bignerdranch.android.criminalintent.model.Crime;
 import com.bignerdranch.android.criminalintent.model.CrimeLab;
 import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
 import com.bignerdranch.android.criminalintent.service.PictureUtils;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.io.File;
 import java.util.Calendar;
@@ -103,15 +103,6 @@ public class CrimeFragment extends Fragment
         super.onPause();
 
         CrimeLab.getInstance(getActivity()).updateCrime(mCrime);
-
-        DatePickerDialog datePickerDialog = (DatePickerDialog) getActivity()
-                .getFragmentManager().findFragmentByTag(DIALOG_DATE);
-        TimePickerDialog timePickerDialog = (TimePickerDialog) getActivity()
-                .getFragmentManager().findFragmentByTag(DIALOG_TIME);
-
-        /* dismiss Date or Time PickerDialog on (f.i.) change screen orientation */
-        if (datePickerDialog != null) datePickerDialog.dismiss();
-        if (timePickerDialog != null) timePickerDialog.dismiss();
     }
 
     @Override
@@ -230,11 +221,12 @@ public class CrimeFragment extends Fragment
 
             @Override
             public void onClick(View view) {
-                DatePickerDialog.newInstance(CrimeFragment.this,
+                DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(CrimeFragment.this,
                         mCalendar.get(Calendar.YEAR),
                         mCalendar.get(Calendar.MONTH),
-                        mCalendar.get(Calendar.DAY_OF_MONTH))
-                        .show(getActivity().getFragmentManager(), DIALOG_DATE);
+                        mCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.dismissOnPause(true);
+                datePickerDialog.show(getActivity().getFragmentManager(), DIALOG_DATE);
             }
         });
 
@@ -246,10 +238,11 @@ public class CrimeFragment extends Fragment
                 // get system default hour format
                 boolean is24HourMode = DateTimeFormat.is24HourFormat(getActivity());
 
-                TimePickerDialog.newInstance(CrimeFragment.this,
+                TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(CrimeFragment.this,
                         mCalendar.get(Calendar.HOUR_OF_DAY),
-                        mCalendar.get(Calendar.MINUTE), is24HourMode)
-                        .show(getActivity().getFragmentManager(), DIALOG_TIME);
+                        mCalendar.get(Calendar.MINUTE), is24HourMode);
+                timePickerDialog.dismissOnPause(true);
+                timePickerDialog.show(getActivity().getFragmentManager(), DIALOG_TIME);
             }
         });
 
@@ -394,9 +387,10 @@ public class CrimeFragment extends Fragment
     }
 
     @Override
-    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
         mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         mCalendar.set(Calendar.MINUTE, minute);
+        mCalendar.set(Calendar.SECOND, second);
         mCrime.setDate(mCalendar.getTime());
         updateCrime();
         updateTime();
