@@ -394,27 +394,18 @@ public class CrimeFragment extends Fragment
     }
 
     private String getCrimeReport() {
-        String solvedString = null;
-        if (mCrime.isSolved()) {
-            solvedString = getString(R.string.crime_report_solved);
-        } else {
-            solvedString = getString(R.string.crime_report_unsolved);
-        }
+        String solvedString = (mCrime.isSolved()) ? getString(R.string.crime_report_solved)
+                : getString(R.string.crime_report_unsolved);
 
         String dateFormat = "EEE, MMM dd";
         String dateString = DateFormat.format(dateFormat, mCrime.getDate()).toString();
 
         String suspect = mCrime.getSuspectName();
-        if (suspect == null) {
-            suspect = getString(R.string.crime_report_no_suspect);
-        } else {
-            suspect = getString(R.string.crime_report_suspect, suspect);
-        }
+        suspect = (suspect == null) ? getString(R.string.crime_report_no_suspect)
+                : getString(R.string.crime_report_suspect, suspect);
 
-        String report = getString(R.string.crime_report,
-                mCrime.getTitle(), dateString, solvedString, suspect);
-
-        return report;
+        return getString(R.string.crime_report, mCrime.getTitle(),
+                dateString, solvedString, suspect);
     }
 
     private String retrieveContactPhoneNumber(String contactId) {
