@@ -378,10 +378,19 @@ public class CrimeFragment extends Fragment
 
     @Override
     public void onDateSet(DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        mCalendar.set(year, monthOfYear, dayOfMonth);
+        mCrime.setDate(mCalendar.getTime());
+        updateCrime();
+        updateDate();
     }
 
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute) {
+        mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mCalendar.set(Calendar.MINUTE, minute);
+        mCrime.setDate(mCalendar.getTime());
+        updateCrime();
+        updateTime();
     }
 
     private String getCrimeReport() {
