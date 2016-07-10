@@ -42,6 +42,7 @@ import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
 import com.bignerdranch.android.criminalintent.service.PictureUtils;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment
@@ -67,6 +68,7 @@ public class CrimeFragment extends Fragment
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private Callbacks mCallbacks;
+    private Calendar mCalendar;
 
     public interface Callbacks {
         void onCrimeUpdated(Crime crime);
@@ -87,6 +89,9 @@ public class CrimeFragment extends Fragment
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
         mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
+
+        mCalendar = Calendar.getInstance();
+        mCalendar.setTime(mCrime.getDate());
 
         mPhotoFile = CrimeLab.getInstance(getActivity()).getPhotoFile(mCrime);
 
