@@ -2,7 +2,6 @@ package com.bignerdranch.android.criminalintent;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,14 +9,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -39,21 +37,23 @@ import com.bignerdranch.android.criminalintent.model.Crime;
 import com.bignerdranch.android.criminalintent.model.CrimeLab;
 import com.bignerdranch.android.criminalintent.service.DateTimeFormat;
 import com.bignerdranch.android.criminalintent.service.PictureUtils;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.io.File;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.UUID;
 
-public class CrimeFragment extends Fragment {
+public class CrimeFragment extends Fragment
+        implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     public static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
 
     private static final String DIALOG_DATE = "date";
     private static final String DIALOG_TIME = "time";
     private static final String DIALOG_IMAGE = "image";
-    private static final int REQUEST_DATE = 0;
-    private static final int REQUEST_TIME = 1;
-    private static final int REQUEST_CONTACT = 2;
-    private static final int REQUEST_PHOTO = 3;
+    private static final int REQUEST_CONTACT = 0;
+    private static final int REQUEST_PHOTO = 1;
 
     private Crime mCrime;
     private File mPhotoFile;
@@ -68,6 +68,7 @@ public class CrimeFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private Callbacks mCallbacks;
+    private Calendar mCalendar;
 
     public interface Callbacks {
         void onCrimeUpdated(Crime crime);
@@ -88,6 +89,9 @@ public class CrimeFragment extends Fragment {
         UUID crimeId = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
         mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
+
+        mCalendar = Calendar.getInstance();
+        mCalendar.setTime(mCrime.getDate());
 
         mPhotoFile = CrimeLab.getInstance(getActivity()).getPhotoFile(mCrime);
 
@@ -118,17 +122,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
-        if (requestCode == REQUEST_DATE) {
-            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
-            mCrime.setDate(date);
-            updateCrime();
-            updateDate();
-        } else if (requestCode == REQUEST_TIME) {
-            Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
-            mCrime.setDate(date);
-            updateCrime();
-            updateTime();
-        } else if (requestCode == REQUEST_CONTACT && data != null) {
+        if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
             // specify which fields we want the query to return values for
             String[] queryFields = new String[] {
@@ -200,12 +194,6 @@ public class CrimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            if (NavUtils.getParentActivityName(getActivity()) != null) {
-                getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-        }
-
         mTitleField = (EditText) v.findViewById(R.id.crime_title);
         mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
@@ -233,10 +221,12 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
-                dialog.show(fm, DIALOG_DATE);
+                DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(CrimeFragment.this,
+                        mCalendar.get(Calendar.YEAR),
+                        mCalendar.get(Calendar.MONTH),
+                        mCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.dismissOnPause(true);
+                datePickerDialog.show(getActivity().getFragmentManager(), DIALOG_DATE);
             }
         });
 
@@ -245,10 +235,14 @@ public class CrimeFragment extends Fragment {
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
-                dialog.show(fm, DIALOG_TIME);
+                // get system default hour format
+                boolean is24HourMode = DateTimeFormat.is24HourFormat(getActivity());
+
+                TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(CrimeFragment.this,
+                        mCalendar.get(Calendar.HOUR_OF_DAY),
+                        mCalendar.get(Calendar.MINUTE), is24HourMode);
+                timePickerDialog.dismissOnPause(true);
+                timePickerDialog.show(getActivity().getFragmentManager(), DIALOG_TIME);
             }
         });
 
@@ -359,11 +353,6 @@ public class CrimeFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                if (NavUtils.getParentActivityName(getActivity()) != null) {
-                    NavUtils.navigateUpFromSameTask(getActivity());
-                }
-                return true;
             case R.id.menu_item_delete_crime:
                 new AlertDialog.Builder(getActivity())
                         .setTitle(R.string.delete_crime)
@@ -381,7 +370,7 @@ public class CrimeFragment extends Fragment {
                                 }
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setIcon(R.drawable.ic_dialog_alert)
                         .show();
                 return true;
             default:
@@ -389,28 +378,37 @@ public class CrimeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDateSet(DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        mCalendar.set(year, monthOfYear, dayOfMonth);
+        mCrime.setDate(mCalendar.getTime());
+        updateCrime();
+        updateDate();
+    }
+
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
+        mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mCalendar.set(Calendar.MINUTE, minute);
+        mCalendar.set(Calendar.SECOND, second);
+        mCrime.setDate(mCalendar.getTime());
+        updateCrime();
+        updateTime();
+    }
+
     private String getCrimeReport() {
-        String solvedString = null;
-        if (mCrime.isSolved()) {
-            solvedString = getString(R.string.crime_report_solved);
-        } else {
-            solvedString = getString(R.string.crime_report_unsolved);
-        }
+        String solvedString = (mCrime.isSolved()) ? getString(R.string.crime_report_solved)
+                : getString(R.string.crime_report_unsolved);
 
         String dateFormat = "EEE, MMM dd";
         String dateString = DateFormat.format(dateFormat, mCrime.getDate()).toString();
 
         String suspect = mCrime.getSuspectName();
-        if (suspect == null) {
-            suspect = getString(R.string.crime_report_no_suspect);
-        } else {
-            suspect = getString(R.string.crime_report_suspect, suspect);
-        }
+        suspect = (suspect == null) ? getString(R.string.crime_report_no_suspect)
+                : getString(R.string.crime_report_suspect, suspect);
 
-        String report = getString(R.string.crime_report,
-                mCrime.getTitle(), dateString, solvedString, suspect);
-
-        return report;
+        return getString(R.string.crime_report, mCrime.getTitle(),
+                dateString, solvedString, suspect);
     }
 
     private String retrieveContactPhoneNumber(String contactId) {
